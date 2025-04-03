@@ -30,6 +30,7 @@ public class FrmTraductor extends JFrame {
     List<String> IdiomasUnicos;
     List<String> Textos;
     ObjectMapper objectmapper;
+    String nombreArchivo;
 
     public FrmTraductor() {
 
@@ -77,7 +78,7 @@ public class FrmTraductor extends JFrame {
         getContentPane().add(txttraduccion);
         txttraduccion.setEnabled(false);
 
-        String nombreArchivo = System.getProperty("user.dir") + "/src/datos/FrasesTraducidas.json";
+        nombreArchivo = System.getProperty("user.dir") + "/src/datos/FrasesTraducidas.json";
 
 
         try {
@@ -136,22 +137,11 @@ public class FrmTraductor extends JFrame {
         String mensaje = "";
 
         objectmapper = new ObjectMapper();
-        String ruta = System.getProperty("user.dir") + "/src/datos/FrasesTraducidas.json";
+        nombreArchivo = System.getProperty("user.dir") + "/src/datos/FrasesTraducidas.json";
 
         try {
             
-            FraseData data2 = objectmapper.readValue(new File(ruta), FraseData.class);
-
-            Textos = data2.getFrases().stream()
-            .map(frase -> frase.getTexto())
-            .collect(Collectors.toList());
-
-            IdiomasUnicos = data2.getFrases().stream()
-            .flatMap(frase -> frase.getTraducciones().stream()) // Descomponer las traducciones
-            .map(Traduccion::getIdioma) // Obtener solo los idiomas
-            .distinct() // Eliminar duplicados
-            .sorted() // Ordenar alfabéticamente (opcional)
-            .collect(Collectors.toList());
+            FraseData data2 = objectmapper.readValue(new File(nombreArchivo), FraseData.class);
 
             int ind = cmbFrases.getSelectedIndex();
             int ind2 = cmbIdiomas.getSelectedIndex();
@@ -184,17 +174,56 @@ public class FrmTraductor extends JFrame {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex);
             }
-
-  
-            
+   
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Algo salio mal");
         }
     }
 
+    private boolean reproduciendo = false;
+
+
     public void reproducirAudio() {
 
+        try {
 
+            if(!reproduciendo) {
+
+                int ind = cmbFrases.getSelectedIndex();
+                int ind2 = cmbIdiomas.getSelectedIndex();
+                String txt1 = Textos.get(ind);
+                String txt2 = IdiomasUnicos.get(ind2);
+    
+                txt1 = txt1.replace(" ", "")
+                .replace("ì", "i")
+                .replace("ò", "o")
+                .replace("d", "D")
+                .replace("e", "E")
+                .replace("l", "L")
+                .replace("?", "")
+                .replace("t", "T")
+                .replace("v", "V");
+
+                String NombreArchivo = System.getProperty("user.dir") + "/src/audios/"+ txt1 +"-"+ txt2 +".mp3";
+
+                File archivoAudio = new File(NombreArchivo);
+
+                if(archivoAudio.exists()) {
+                    reproduciendo = true;
+
+                    Reproductoraudio.Reproduccion(NombreArchivo);
+                }
+            } else {
+
+                Reproductoraudio.detener();
+                reproduciendo = false;
+                JOptionPane.showMessageDialog(null, "No hay audio disponible");
+            }
+
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Fallo al reproducir");
+        }
 
     }
 

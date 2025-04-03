@@ -15,11 +15,12 @@ public class Reproductoraudio {
         }
     }
 
-    public static void Reproduccion(String archivoaudio) {
+    public static void Reproduccion(String NombreArchivo) {
+        detener();
 
         try {
 
-            FileInputStream fis = new FileInputStream(archivoaudio);
+            FileInputStream fis = new FileInputStream(NombreArchivo);
             BufferedInputStream bis = new BufferedInputStream(fis);
             Reproductor = new Player(bis);
 
@@ -29,15 +30,16 @@ public class Reproductoraudio {
 
         new Thread() {
 
-
             public void run() {
 
                 try {
+                    
                     Reproductor.play();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(new JFrame(), ex);
                 }
             }
+
         }.start();
 
 
