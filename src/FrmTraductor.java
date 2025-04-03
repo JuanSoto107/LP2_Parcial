@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import java.awt.Font;
 
 import entidades.Frase;
 import entidades.Traduccion;
@@ -77,6 +78,7 @@ public class FrmTraductor extends JFrame {
         txttraduccion.setBounds(40, 180, 350, 100);
         getContentPane().add(txttraduccion);
         txttraduccion.setEnabled(false);
+        txttraduccion.setFont(new Font("Arial Narrow", 5, 22));
 
         nombreArchivo = System.getProperty("user.dir") + "/src/datos/FrasesTraducidas.json";
 
@@ -163,7 +165,7 @@ public class FrmTraductor extends JFrame {
                             }
                         }
                         if(existe == false) {
-                            JOptionPane.showMessageDialog(null, "No hay traduccion disponible");
+                            JOptionPane.showMessageDialog(null, "No hay traduccion disponible en " + textoidioma);
                         }
 
                     }
@@ -193,16 +195,52 @@ public class FrmTraductor extends JFrame {
                 int ind2 = cmbIdiomas.getSelectedIndex();
                 String txt1 = Textos.get(ind);
                 String txt2 = IdiomasUnicos.get(ind2);
-    
-                txt1 = txt1.replace(" ", "")
-                .replace("ì", "i")
-                .replace("ò", "o")
-                .replace("d", "D")
-                .replace("e", "E")
-                .replace("l", "L")
-                .replace("?", "")
-                .replace("t", "T")
-                .replace("v", "V");
+
+                switch (ind) {
+                    case 0:
+
+                    break;
+
+                    case 1:
+                    txt1 = txt1.replace(" ", "")
+                    .replace("í", "i")
+                    .replace("d", "D");
+                    break;
+
+                    case 2:
+                    txt1 = txt1.replace(" ", "");
+                    break;
+
+
+                    case 3:
+                    txt1 = txt1.replace(" ", "");
+                    break;
+
+                    case 4:
+                    txt1 = txt1.replace(" ", "")
+                    .replace("ó", "o")
+                    .replace("?", "")
+                    .replace("e", "E");
+
+                    break;
+
+                    case 5:
+                    txt1 = txt1.replace(" ", "")
+                    .replace("ó", "o")
+                    .replace("ll", "Ll")
+                    .replace("?", "")
+                    .replace("t", "T");
+                    break;
+
+                    case 6:
+                    txt1 = txt1.replace(" ", "")
+                    .replace("ó", "o")
+                    .replace("d", "D")
+                    .replace("?", "")
+                    .replace("v", "V");
+                    break;
+                }
+
 
                 String NombreArchivo = System.getProperty("user.dir") + "/src/audios/"+ txt1 +"-"+ txt2 +".mp3";
 
@@ -212,12 +250,15 @@ public class FrmTraductor extends JFrame {
                     reproduciendo = true;
 
                     Reproductoraudio.Reproduccion(NombreArchivo);
+
+                } else {
+
+                    JOptionPane.showMessageDialog(null, "No hay audio disponible en "+ txt2);
                 }
             } else {
 
                 Reproductoraudio.detener();
                 reproduciendo = false;
-                JOptionPane.showMessageDialog(null, "No hay audio disponible");
             }
 
 
